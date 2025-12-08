@@ -19,22 +19,25 @@ static const struct gpio_dt_spec led3 = GPIO_DT_SPEC_GET(DT_ALIAS(led3), gpios);
 
 static void flash_led(uint32_t reset_cause, bool wakeup)
 {
-	const struct gpio_dt_spec *p_led = NULL;
-
 	if (wakeup)
-		p_led = &led0;
-	else if (reset_cause & RESET_POR)
-		p_led = &led1;
-	else if (reset_cause & RESET_PIN)
-		p_led = &led2;
-	else if (reset_cause & RESET_DEBUG)
-		p_led = &led3;
-
-	gpio_pin_set_dt(p_led, 1);
+		gpio_pin_set_dt(&led0, 1);
+	if (reset_cause & RESET_POR)
+		gpio_pin_set_dt(&led1, 1);
+	if (reset_cause & RESET_PIN)
+		gpio_pin_set_dt(&led2, 1);
+	if (reset_cause & RESET_DEBUG)
+		gpio_pin_set_dt(&led3, 1);
 
 	k_msleep(200);
 
-    gpio_pin_set_dt(p_led, 0);
+    if (wakeup)
+		gpio_pin_set_dt(&led0, 0);
+	if (reset_cause & RESET_POR)
+		gpio_pin_set_dt(&led1, 0);
+	if (reset_cause & RESET_PIN)
+		gpio_pin_set_dt(&led2, 0);
+	if (reset_cause & RESET_DEBUG)
+		gpio_pin_set_dt(&led3, 0);
 }
 
 static int config_hw()
