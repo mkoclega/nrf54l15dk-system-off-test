@@ -21,23 +21,23 @@ static void flash_led(uint32_t reset_cause, bool wakeup)
 {
 	if (wakeup)
 		gpio_pin_set_dt(&led0, 1);
-	if (reset_cause & RESET_POR)
-		gpio_pin_set_dt(&led1, 1);
-	if (reset_cause & RESET_PIN)
+	else if (reset_cause & RESET_PIN)
 		gpio_pin_set_dt(&led2, 1);
-	if (reset_cause & RESET_DEBUG)
+	else if (reset_cause & RESET_DEBUG)
 		gpio_pin_set_dt(&led3, 1);
+	else if (reset_cause == 0)
+		gpio_pin_set_dt(&led1, 1);
 
 	k_msleep(200);
 
     if (wakeup)
 		gpio_pin_set_dt(&led0, 0);
-	if (reset_cause & RESET_POR)
-		gpio_pin_set_dt(&led1, 0);
-	if (reset_cause & RESET_PIN)
+	else if (reset_cause & RESET_PIN)
 		gpio_pin_set_dt(&led2, 0);
-	if (reset_cause & RESET_DEBUG)
+	else if (reset_cause & RESET_DEBUG)
 		gpio_pin_set_dt(&led3, 0);
+	else if (reset_cause == 0)
+		gpio_pin_set_dt(&led1, 0);
 }
 
 static int config_hw()
